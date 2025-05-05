@@ -294,7 +294,10 @@ class OpenAIModel(Model):
 
     def _process_response(self, response: chat.ChatCompletion) -> ModelResponse:
         """Process a non-streamed response, and prepare a message to return."""
-        timestamp = datetime.fromtimestamp(response.created, tz=timezone.utc)
+        try:
+            timestamp = datetime.fromtimestamp(response.created, tz=timezone.utc)
+        except TypeError:
+            timestamp = datetime.now(tz=timezone.utc)
         choice = response.choices[0]
         items: list[ModelResponsePart] = []
         if choice.message.content is not None:
